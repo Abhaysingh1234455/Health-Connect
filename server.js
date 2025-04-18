@@ -85,7 +85,7 @@
 // // POST /SignupPage
 // app.post('/SignupPage', async (req, res) => {
 //   try {
-//     const { Email, Password, otp } = req.body;
+//     const { Name,Email, Password, otp } = req.body;
 //     const gmailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
 //     if (!gmailRegex.test(Email)) {
 //       return res.status(400).json({ success: false, message: "Only valid Gmail addresses are allowed" });
@@ -109,7 +109,7 @@
 //       return res.status(400).json({ success: false, message: "User already exists" });
 //     }
 
-//     const newUser = await Health_Connect_Model.create({ Email, Password });
+//     const newUser = await Health_Connect_Model.create({ Name,Email, Password });
 //     otpStore.delete(Email);
 //     res.json({ success: true, user: newUser });
 
@@ -268,6 +268,58 @@
 //     res.status(500).json({ error: "Failed to cancel appointment" });
 //   }
 // });
+// // ✅ UPDATE USER INFO (Phone, DOB, Blood Group)
+// app.post("/update-info", async (req, res) => {
+//   const { userId, name, email, phone, dob, bloodGroup } = req.body;
+
+//   try {
+//     const user = await Health_Connect_Model.findById(userId); // Find the user by ID
+
+//     if (!user) {
+//       return res.status(404).json({ success: false, message: "User not found" });
+//     }
+
+//     // Update the user fields
+//     user.Name = name;
+//     user.Email = email;
+//     user.phone = phone;
+//     user.dob = dob;
+//     user.bloodGroup = bloodGroup;
+
+//     await user.save(); // Save the updated user
+
+//     res.status(200).json({ success: true, message: "User info updated" });
+//   } catch (error) {
+//     console.error("Error updating user info:", error);
+//     res.status(500).json({ success: false, message: "Failed to update user info" });
+//   }
+// });
+// // ✅ GET USER APPOINTMENTS
+// // GET /get-user-info
+// app.get("/get-user-info", async (req, res) => {
+//   const { userId } = req.query;
+
+//   if (!userId) {
+//     return res.status(400).json({ message: "User ID is required" });
+//   }
+
+//   try {
+//     const user = await Health_Connect_Model.findById(new mongoose.Types.ObjectId(userId)); // Convert string to ObjectId
+//     if (!user) {
+//       return res.status(404).json({ message: "User not found" });
+//     }
+//     res.json({
+//       name: user.Name,
+//       email: user.Email,
+//       phone: user.phone,
+//       dob: user.dob,
+//       bloodGroup: user.bloodGroup,
+//     });
+//   } catch (error) {
+//     console.error("Error fetching user info:", error);
+//     res.status(500).json({ message: "Error fetching user info", error });
+//   }
+// });
 
 // // START SERVER
 // app.listen(3001, () => {
@@ -369,7 +421,7 @@ app.post('/request-otp', async (req, res) => {
 // POST /SignupPage
 app.post('/SignupPage', async (req, res) => {
   try {
-    const { Email, Password, otp } = req.body;
+    const { Name,Email, Password, otp } = req.body;
     const gmailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
     if (!gmailRegex.test(Email)) {
       return res.status(400).json({ success: false, message: "Only valid Gmail addresses are allowed" });
@@ -393,7 +445,7 @@ app.post('/SignupPage', async (req, res) => {
       return res.status(400).json({ success: false, message: "User already exists" });
     }
 
-    const newUser = await Health_Connect_Model.create({ Email, Password });
+    const newUser = await Health_Connect_Model.create({ Name,Email, Password });
     otpStore.delete(Email);
     res.json({ success: true, user: newUser });
 
@@ -550,5 +602,57 @@ app.post("/cancel-appointment", async (req, res) => {
   } catch (error) {
     console.error("Error cancelling appointment:", error);
     res.status(500).json({ error: "Failed to cancel appointment" });
+  }
+});
+// ✅ UPDATE USER INFO (Phone, DOB, Blood Group)
+app.post("/update-info", async (req, res) => {
+  const { userId, name, email, phone, dob, bloodGroup } = req.body;
+
+  try {
+    const user = await Health_Connect_Model.findById(userId); // Find the user by ID
+
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+
+    // Update the user fields
+    user.Name = name;
+    user.Email = email;
+    user.phone = phone;
+    user.dob = dob;
+    user.bloodGroup = bloodGroup;
+
+    await user.save(); // Save the updated user
+
+    res.status(200).json({ success: true, message: "User info updated" });
+  } catch (error) {
+    console.error("Error updating user info:", error);
+    res.status(500).json({ success: false, message: "Failed to update user info" });
+  }
+});
+// ✅ GET USER APPOINTMENTS
+// GET /get-user-info
+app.get("/get-user-info", async (req, res) => {
+  const { userId } = req.query;
+
+  if (!userId) {
+    return res.status(400).json({ message: "User ID is required" });
+  }
+
+  try {
+    const user = await Health_Connect_Model.findById(new mongoose.Types.ObjectId(userId)); // Convert string to ObjectId
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    res.json({
+      name: user.Name,
+      email: user.Email,
+      phone: user.phone,
+      dob: user.dob,
+      bloodGroup: user.bloodGroup,
+    });
+  } catch (error) {
+    console.error("Error fetching user info:", error);
+    res.status(500).json({ message: "Error fetching user info", error });
   }
 });
